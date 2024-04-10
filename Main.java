@@ -1,61 +1,58 @@
-// Read the README.md
-// Read it again
-// Your code here
-// R these 4 lines of comments
-
-import java.io.File;
+import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.io.FileWriter;
+
+class Palindrome {
+    boolean isPalindrome(String word, int start, int end) {
+        if (start == end) {
+            return true;
+        }
+        if (word.charAt(start) != word.charAt(end)) {
+            return false;
+        }
+        return isPalindrome(word, start + 1, end - 1);
+    }
+
+    void writeToFile(String filename, ArrayList<String> palindromeList) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String palindrome : palindromeList) {
+                writer.write(palindrome);
+                writer.newLine(); // Add newline after each palindrome
+            }
+            // Success Message
+            System.out.println("Data has been written to " + filename);
+        } catch (IOException e) {
+            // Handle any IO exceptions
+            System.err.println("Error writing to " + filename + ": " + e.getMessage());
+        } // end of Catch block
+    }
+}
 
 class Main {
     public static void main(String[] args) {
-        //Array list that contains all palindromes
-        ArrayList<String> palindromeList = new ArrayList<>();
+        Palindrome palindrome = new Palindrome();
         Scanner in = new Scanner(System.in);
-        String word;
-
-        // repeats code until user chooses to exit
-        do {
-            System.out.println("Enter a word(type exit to stop)");
-            word = in.nextLine();
-            if (!word.equals("exit") && check(word)) {
+        System.out.println("Welcome to CS 212 Palindrome! ");
+        System.out.println("Please enter a word.");
+        String word = in.next();
+        ArrayList<String> palindromeList = new ArrayList<>();
+        while (!word.equals("exit")) {
+            boolean palindromeCheck;
+            if (word.length() == 0) { 
+                palindromeCheck = true;
+            } else {
+                palindromeCheck = palindrome.isPalindrome(word, 0, word.length() - 1);
+            }
+            if (palindromeCheck) {
                 palindromeList.add(word);
             }
-        }while(!word.equals("exit"));
-
-        System.out.println("Input your filename: ");
-        String filename = in.nextLine();
-
-            try {
-                FileWriter wr = new FileWriter(filename);
-                for(String palindrome:palindromeList) {
-                    wr.write(palindrome);
-                }
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-
-
-            }
-
-        //checks if word is a palindrome
-        public static boolean check(String word){
-        if (word.length()>=1) {
-            return true;
+            System.out.println("Please enter another word or type 'exit' to quit.");
+            word = in.next();
         }
-         else if(word.charAt(0)==(word.charAt(word.length()-1))){
-             return check(word.substring(1,word.length()-1));
-
-         }
-         else{
-             return false;
-         }
-        }
-
-
-        
+        System.out.println("Please enter the file name you want to write all of your palindromes into.");
+        String filename = in.next();
+        palindrome.writeToFile(filename, palindromeList);
     }
-
+}
